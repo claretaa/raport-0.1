@@ -2,8 +2,8 @@
 #include <fstream>
 #include <string>
 #include <bits/stdc++.h>
-#include <stdio.h>
-#include <stdlib.h>
+// #include <stdio.h>
+// #include <stdlib.h>
 // #include <unistd.h>
 
 using namespace std;
@@ -14,7 +14,7 @@ struct Mahasiswa{
     string semester = "Semester 1";
     unsigned int id;
     unsigned int NIU;
-    int sks[9]={3, 3, 3, 2, 3, 2, 2, 2, 2};
+    int sks[9] = {3, 3, 3, 2, 3, 2, 2, 2, 2};
     float nilai[9];
     float nilaiSks[9];
     //nilai = {FD, KD, KAL, BINDO, PRG, PRAK PRG, LOGIF, ALF, AGAMA}
@@ -23,37 +23,36 @@ struct Mahasiswa{
 };
 
 int getOption();
-void inputData(ofstream &myFile, ifstream &ImyFile, int &idmhs);
+void inputData(ofstream &myFile, int &idmhs);
 void writeData(ofstream &myFile, Mahasiswa &mahasiswa);
-void readData(ifstream &ImyFile, Mahasiswa mahasiswa[], int &jumlah);
+void readData(ifstream &inputFile, Mahasiswa mahasiswa[], int &jumlah);
 void tampilkanDataMahasiswa(Mahasiswa mahasiswa[], int &jumlah);
 void tampilkanRapot();
 void cariData();
-int cariJumlah(ifstream &ImyFile);
-int idAkhir(ifstream &ImyFile);
-void updateData(ofstream &OmyFile);
-void deleteData(ofstream &OmyFile, int id, int jumlah, Mahasiswa mahasiswa[]);
-void deleteAll(ofstream &OmyFile);
+int cariJumlah(ifstream &inputFile);
+int idAkhir(ifstream &inputFile);
+void updateData(ofstream &outputFile, int jumlah, Mahasiswa mahasiswa[]);
+void deleteData(ofstream &outputFile, int jumlah, Mahasiswa mahasiswa[]);
+void deleteAll(ofstream &outputFile);
 
 
 int main(){
-    ofstream OmyFile;
-    ifstream ImyFile;
-    OmyFile.open("data.txt", ios::app);
-    ImyFile.open("data.txt", ios::in);
-    Mahasiswa mahasiswa[100];
-    int jumlah = cariJumlah(ImyFile);
-    int idmhs = idAkhir(ImyFile);
-    readData(ImyFile, mahasiswa, jumlah);
+    ofstream outputFile;
+    ifstream inputFile;
+    outputFile.open("data.txt", ios::app);
+    inputFile.open("data.txt", ios::in);
+    int jumlah = cariJumlah(inputFile);
+    int idmhs = idAkhir(inputFile);
+    Mahasiswa mahasiswa[jumlah];
+    readData(inputFile, mahasiswa, jumlah);
     pilihOpsi:
     int opsi = getOption();
     char is_continue;
-    int i, j;
 	
     switch (opsi){
         case 1:
             cout << "Input mahasiswa" << endl;
-            inputData(OmyFile, ImyFile, idmhs);
+            inputData(outputFile, idmhs);
             break;
         case 2:
             cout << "Jumlah mahasiswa: " << jumlah << endl;
@@ -73,25 +72,21 @@ int main(){
             break;
         case 5:
             cout << "Ubah data" << endl;
-
-            
+            deleteAll(outputFile);
+            updateData(outputFile, jumlah, mahasiswa);
             break;
         case 6:
             int hapusPilih;
             cout << "Hapus data" << endl;
-            cout << "1.Hapus satu" << endl;
+            cout << "1.Hapus satu berdasarkan id" << endl;
             cout << "2.Reset" << endl;
-            cin >> hapusPilih;
+            cin >> hapusPilih;void updateData(ofstream &outputFile, int id, int jumlah, Mahasiswa mahasiswa[]);
+
+            deleteAll(outputFile);
             if(hapusPilih==2){
-                deleteAll(OmyFile);
                 cout << "Database telah berhasil direset" << endl;
             } else if(hapusPilih==1){
-                int id;
-                cout << "Menghapus data berdasarkan id ";
-                cin >> id;
-                cout << "Dalam proses ...";
-                deleteAll(OmyFile);
-                deleteData(OmyFile, id, jumlah, mahasiswa);
+                deleteData(outputFile, jumlah, mahasiswa);
             } else{
                 cout << "Perintah tidak dikenali" << endl;
             }
@@ -101,13 +96,12 @@ int main(){
     }
     cout << endl << endl << "Anda mungkin dapat merestart program untuk melihat perubahan" << endl;
     cout << "Apakah ingin exit program [y/n]" << endl;
-    char c;
-    cin >> c;
-    if(c=='n'){
+    cin >> is_continue;
+    if(is_continue == 'n'){
         goto pilihOpsi;
     }
-    ImyFile.close();
-    OmyFile.close();
+    inputFile.close();
+    outputFile.close();
     cout << "Akhir Program" << endl;
     return 0;
 }
@@ -130,14 +124,14 @@ int getOption(){
     return opsi;
 }
 
-void readData(ifstream &ImyFile, Mahasiswa mahasiswa[], int &jumlah){
+void readData(ifstream &inputFile, Mahasiswa mahasiswa[], int &jumlah){
     string buffer;
     for(int i=0;i<jumlah;i++){
         float jumlahNilaiSks=0;
         int jumlahSks=21;
-        ImyFile >> mahasiswa[i].id;
+        inputFile >> mahasiswa[i].id;
         for(int j=0;j<3;j++){
-            ImyFile >> buffer;
+            inputFile >> buffer;
             if(buffer!="-"){
                 mahasiswa[i].nama += buffer + " ";
             }
@@ -149,16 +143,16 @@ void readData(ifstream &ImyFile, Mahasiswa mahasiswa[], int &jumlah){
                 mahasiswa[i].namaAkhir = buffer;
             }
         }
-        ImyFile >> mahasiswa[i].NIU;
-        ImyFile >> mahasiswa[i].nilai[0];
-        ImyFile >> mahasiswa[i].nilai[1];
-        ImyFile >> mahasiswa[i].nilai[2];
-        ImyFile >> mahasiswa[i].nilai[3];
-        ImyFile >> mahasiswa[i].nilai[4];
-        ImyFile >> mahasiswa[i].nilai[5];
-        ImyFile >> mahasiswa[i].nilai[6];
-        ImyFile >> mahasiswa[i].nilai[7];
-        ImyFile >> mahasiswa[i].nilai[8];
+        inputFile >> mahasiswa[i].NIU;
+        inputFile >> mahasiswa[i].nilai[0];
+        inputFile >> mahasiswa[i].nilai[1];
+        inputFile >> mahasiswa[i].nilai[2];
+        inputFile >> mahasiswa[i].nilai[3];
+        inputFile >> mahasiswa[i].nilai[4];
+        inputFile >> mahasiswa[i].nilai[5];
+        inputFile >> mahasiswa[i].nilai[6];
+        inputFile >> mahasiswa[i].nilai[7];
+        inputFile >> mahasiswa[i].nilai[8];
         for(int j=0;j<9;j++){
             if(mahasiswa[i].nilai[j]>80){
                 mahasiswa[i].grade[j]='A';
@@ -186,21 +180,21 @@ void tampilkanDataMahasiswa(Mahasiswa mahasiswa[], int &jumlah){
     //nama, niu, prodi, ipk
     //sementara
     for(int i=0;i<jumlah;i++){
-        cout << mahasiswa[i].id << "\t";
+        cout << mahasiswa[i].id << "  ";
         cout << "Nama:" << mahasiswa[i].nama << "\t";
         cout << "Prodi:" << mahasiswa[i].prodi << "\n";
-        cout << "\tNIU:" << mahasiswa[i].NIU << "\t";
+        cout << "  NIU:" << mahasiswa[i].NIU << "\t";
         cout << "IPK:" << mahasiswa[i].IPK << endl;
     }
 }
 
-void inputData(ofstream &OmyFile, ifstream &ImyFile, int &idmhs){
+void inputData(ofstream &outputFile, int &idmhs){
     int n;
     string temp;
     cout << "Tentukan jumlah mahasiswa ";
     cin >> n;
-    cout << endl;
     Mahasiswa mahasiswa[n];
+    cout << endl;
     for(int i=0;i<n;i++){
         mahasiswa[i].id = idmhs+i+1;
         cout << "ID Mahasiswa: " << mahasiswa[i].id << endl;
@@ -231,71 +225,77 @@ void inputData(ofstream &OmyFile, ifstream &ImyFile, int &idmhs){
         cin >> mahasiswa[i].nilai[7]; 
         cout << "Input nilai AGAMA: ";
         cin >> mahasiswa[i].nilai[8];
-        writeData(OmyFile, mahasiswa[i]);
+        writeData(outputFile, mahasiswa[i]);
         cout << endl;
     }
     cout << "Data berhasil diinput" << endl;
 }
 
-void writeData(ofstream &OmyFile, Mahasiswa &mahasiswa){
-    OmyFile << mahasiswa.id << "\t";
-    OmyFile << mahasiswa.namaAwal << "\t";
-    OmyFile << mahasiswa.namaTengah << "\t";    
-    OmyFile << mahasiswa.namaAkhir << "\t";      
-    OmyFile << mahasiswa.NIU << "\t";
-    OmyFile << mahasiswa.nilai[0] << "\t";
-    OmyFile << mahasiswa.nilai[1] << "\t";
-    OmyFile << mahasiswa.nilai[2] << "\t";
-    OmyFile << mahasiswa.nilai[3] << "\t";
-    OmyFile << mahasiswa.nilai[4] << "\t";
-    OmyFile << mahasiswa.nilai[5] << "\t";
-    OmyFile << mahasiswa.nilai[6] << "\t";
-    OmyFile << mahasiswa.nilai[7] << "\t";
-    OmyFile << mahasiswa.nilai[8] << "\n";
+void writeData(ofstream &outputFile, Mahasiswa &mahasiswa){
+    outputFile << mahasiswa.id << "\t";
+    outputFile << mahasiswa.namaAwal << "\t";
+    outputFile << mahasiswa.namaTengah << "\t";    
+    outputFile << mahasiswa.namaAkhir << "\t";      
+    outputFile << mahasiswa.NIU << "\t";
+    outputFile << mahasiswa.nilai[0] << "\t";
+    outputFile << mahasiswa.nilai[1] << "\t";
+    outputFile << mahasiswa.nilai[2] << "\t";
+    outputFile << mahasiswa.nilai[3] << "\t";
+    outputFile << mahasiswa.nilai[4] << "\t";
+    outputFile << mahasiswa.nilai[5] << "\t";
+    outputFile << mahasiswa.nilai[6] << "\t";
+    outputFile << mahasiswa.nilai[7] << "\t";
+    outputFile << mahasiswa.nilai[8] << "\n";
 }
 
-int cariJumlah(ifstream &ImyFile){
+int cariJumlah(ifstream &inputFile){
     string buffer;
     int jumlah = 0;
-    while(!ImyFile.eof()){
-        getline(ImyFile, buffer);
+    while(!inputFile.eof()){
+        getline(inputFile, buffer);
         jumlah++;
     }
-    ImyFile.close();
-    ImyFile.open("data.txt", ios::in);
+    inputFile.close();
+    inputFile.open("data.txt", ios::in);
     return jumlah-1;
 }
 
-int idAkhir(ifstream &ImyFile){
+int idAkhir(ifstream &inputFile){
     string buffer;
     int id=0;
     do{
-        ImyFile >> id;
-        getline(ImyFile, buffer);
-    } while(!ImyFile.eof());
-    ImyFile.close();
-    ImyFile.open("data.txt", ios::in);
+        inputFile >> id;
+        getline(inputFile, buffer);
+    } while(!inputFile.eof());
+    inputFile.close();
+    inputFile.open("data.txt", ios::in);
     return id;
 }
 
-void updateData(ofstream &OmyFile, ifstream ImyFile, int id){
-    string buffer;
-    for(int i=1;i<id;i++){
-        getline(ImyFile, buffer);
-    }
-}
-
-void deleteData(ofstream &OmyFile, int id, int jumlah, Mahasiswa mahasiswa[]){
+void updateData(ofstream &outputFile, int jumlah, Mahasiswa mahasiswa[]){
+    int id;
+    cin >> id;
     for(int i=0;i<jumlah;i++){
         if(id!=mahasiswa[i].id){
-            writeData(OmyFile, mahasiswa[i]);            
+            writeData(outputFile, mahasiswa[i]);            
         }
     }
 }
 
-void deleteAll(ofstream &OmyFile){
-    OmyFile.close();
+void deleteData(ofstream &outputFile, int jumlah, Mahasiswa mahasiswa[]){
+    int id;
+    cout << "Input id: ";
+    cin >> id;
+    for(int i=0;i<jumlah;i++){
+        if(id!=mahasiswa[i].id){
+            writeData(outputFile, mahasiswa[i]);            
+        }
+    }
+}
+
+void deleteAll(ofstream &outputFile){
+    outputFile.close();
     //int status = remove("data.txt");
-    usleep(2000000);//sleeps for 2 second
-    OmyFile.open("data.txt", ios::trunc);
+    usleep(500000);//sleeps for 0.5 second
+    outputFile.open("data.txt", ios::trunc);
 }
