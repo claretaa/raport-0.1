@@ -1,0 +1,85 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <bits/stdc++.h>
+#include <iomanip>
+#include <algorithm>
+using namespace std;
+
+struct Mahasiswa{
+	string nama;
+	string prodi = "Ilmu Komputer";
+	unsigned int niu;
+	float ipk;
+	int rank;
+};
+
+bool compare (Mahasiswa a, Mahasiswa b){
+	if (a.ipk != b.ipk) {
+		return a.ipk > b.ipk;
+	} else {
+		return a.nama < b.nama;
+	}
+}
+int main (){
+	int n,i,j;
+	Mahasiswa mahasiswa [100];
+	cout<<"Banyaknya entri : ";
+	cin>>n;
+	
+	//input data
+	for (int i=0; i<n; i++){
+		cout<<"Data ke-"<<i+1;
+		cout<<"\nNama mahasiswa : ";
+		cin>>mahasiswa[i].nama;
+		
+		cout<<"Program Studi : "<<mahasiswa[i].prodi<<endl;
+		
+		cout<<"NIU : ";
+		cin>>mahasiswa[i].niu;
+		
+		cout<<"IPK : ";
+		cin>>mahasiswa[i].ipk;
+		cout<<endl;
+	}
+
+	//Sorting
+	sort(mahasiswa, mahasiswa+n, compare);
+	
+	//Pemberian ranking
+	for (int i=0; i<n; i++){
+		mahasiswa[i].rank = i+1;
+	}
+
+	//Mencari data mahasiswa berdasarkan ranking menggunakan binary search
+	cout<<"PENCARIAN DATA MAHASISWA CS UGM 2022/2023\n";
+	cout<<"_________________________________________\n\n";
+	int target,mid;
+	cout<<"Mahasiswa pada peringkat : ";
+	cin>>target;
+
+	int left = 0;
+	int right = n-1;
+	
+	while (left <= right){
+		mid = left + (right-left)/2;
+		if (mahasiswa[mid].rank == target){
+			cout<<"\nData mahasiswa ditemukan.\n";
+			cout<<"Nama : "<<mahasiswa[mid].nama<<endl;
+			cout<<"NIU  : "<<mahasiswa[mid].niu<<endl;
+			cout<<"IPK  : "<<mahasiswa[mid].ipk<<endl;
+			break;
+		} else if (mahasiswa[mid].rank < target) {
+			left = mid + 1;
+		} else if (mahasiswa[mid].rank> target) {
+			right = mid - 1;
+		}
+	}
+	
+	if (left > right){
+		cout<<"Data mahasiswa tidak ditemukan."
+			<<"Permintaan Anda melampaui jumlah mahasiswa yang ada di CS UGM 2022/2023";
+	}
+	
+	return 0;
+}
