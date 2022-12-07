@@ -1,0 +1,74 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <bits/stdc++.h>
+#include <iomanip>
+#include <algorithm>
+using namespace std;
+
+struct Mahasiswa{
+	string nama;
+	string prodi = "Ilmu Komputer";
+	unsigned int niu;
+	float ipk;
+	int rank;
+};
+
+bool compare (Mahasiswa a, Mahasiswa b){
+	if (a.ipk != b.ipk) {
+		return a.ipk > b.ipk;
+	} else {
+		return a.nama < b.nama;
+	}
+}
+int main (){
+	int n,i,j;
+	Mahasiswa mahasiswa [100];
+	cout<<"Banyaknya entri : ";
+	cin>>n;
+	
+	//input data
+	for (int i=0; i<n; i++){
+		cout<<"Data ke-"<<i+1;
+		cout<<"\nNama mahasiswa : ";
+		cin>>mahasiswa[i].nama;
+		
+		cout<<"Program Studi : "<<mahasiswa[i].prodi<<endl;
+		
+		cout<<"NIU : ";
+		cin>>mahasiswa[i].niu;
+		
+		cout<<"IPK : ";
+		cin>>mahasiswa[i].ipk;
+		cout<<endl;
+	}
+
+	//Sorting
+	sort(mahasiswa, mahasiswa+n, compare);
+	
+	//Pemberian ranking
+	for (int i=0; i<n; i++){
+		mahasiswa[i].rank = i+1;
+	}
+
+	//Display peringkat
+	cout<<"PEMERINGKATAN MAHASISWA CS UGM SEMESTER GASAL 2022/2023"<<endl;
+	cout<<"_______________________________________________________ \n\n";
+	cout<<"Rank \t";
+	cout<<"Nama \t"<<setw(10);
+	cout<<"Program Studi \t"<<setw(7);
+	cout<<"NIU \t"<<setw(5);
+	cout<<"IPK";
+	cout<<endl;
+	
+	for (int i=0; i<n; i++){
+		cout<<setw(3);
+		cout<<mahasiswa[i].rank<<"\t";
+		cout<<mahasiswa[i].nama<<"\t"<<setw(10);
+		cout<<mahasiswa[i].prodi<<setw(10);
+		cout<<mahasiswa[i].niu<<setw(5);
+		cout<<mahasiswa[i].ipk;
+		cout<<endl;
+	}
+	return 0;
+}
